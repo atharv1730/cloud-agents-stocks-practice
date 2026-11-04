@@ -1,8 +1,6 @@
 import yfinance as yf
 
-ticker = yf.Ticker("AAPL")
-data = ticker.info
-
-print(f"AAPL Stock Information: ${data['currentPrice']}")
-print(f"Day high: ${data['dayHigh']}")
-print(f"Day low: ${data['dayLow']}")
+tickers = ["AAPL", "NVDA", "MSFT"]
+for symbol in tickers:
+    price = yf.Ticker(symbol).info["currentPrice"]
+    print(f"The current price of {symbol} is: ${price}")
