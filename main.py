@@ -8,11 +8,14 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def analyze_alert(symbol, price, rule_type, threshold):
-    response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents=f"{symbol} is at ${price} which is {rule_type} the threshold of ${threshold}. Give a 2 sentence summary - what happened and what the user should look at"
-    )
-    return response.text
+    try:
+        response = client.models.generate_content(
+            model="gemini-3.8-flash",
+            contents=f"{symbol} is at ${price} which is {rule_type} the threshold of ${threshold}. Give a 2 sentence summary - what happened and what the user should look at"
+        )
+        return response.text
+    except Exception as e:
+        return f"{symbol} is {rule_type} ${threshold} (AI summary unavailable: {e})"
 
 WATCHLIST = {
     "AAPL": {"alert_below": 200, "alert_above": 250, "alerted": False},
