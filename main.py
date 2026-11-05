@@ -1,3 +1,4 @@
+import time
 import yfinance as yf
 
 WATCHLIST = {
@@ -6,18 +7,19 @@ WATCHLIST = {
     "MSFT": {"alert_below": 220, "alert_above": 250, "tracked": False},
 }
 
-for symbol, rules in WATCHLIST.items():
-    price = yf.Ticker(symbol).info["currentPrice"]
-    
-    if not rules["tracked"]:
-        if price < rules["alert_below"]:
-            print(f"Alert: {symbol} price is below {rules['alert_below']}. Current price: {price}")
-        elif price > rules["alert_above"]:
-            print(f"Alert: {symbol} price is above {rules['alert_above']}. Current price: {price}")
-        else:
-            print(f"{symbol} price is within the alert range. Current price: {price}")
+while True:
+    for symbol, rules in WATCHLIST.items():
+        price = yf.Ticker(symbol).info["currentPrice"]
+        out_of_range = price < rules["alert_below"] or price > rules["alert_above"]
         
-        # setting tracked to true to avoid repeated alerts
-        rules["tracked"] = True
-    else:
-        print("Nothing new to report.")
+        if out_of_range and not rules["tracked"]:
+            print(f"Alert: {symbol} at ${price}")
+            rules["tracked"] = True
+        elif not out_of_range and rules["tracked"]:
+            print(f"{symbol} back in range at ${price}")
+            rules["tracked"] = False
+        else:
+            print(f"{symbol}: ${price}")
+    
+    print("Sleeping for 20 seconds...")
+    time.sleep(20)
